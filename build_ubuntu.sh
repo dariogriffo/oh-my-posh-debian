@@ -88,7 +88,7 @@ build_architecture() {
             return 1
         fi
 
-        id="$(docker create "oh-my-posh-$dist-$build_arch")"
+        id="$(docker create "oh-my-posh-ubuntu-$dist-$build_arch")"
         if ! docker cp "$id:/oh-my-posh_$FULL_VERSION.deb" - > "./oh-my-posh_$FULL_VERSION.deb"; then
             echo "❌ Failed to extract .deb package for $dist on $build_arch"
             return 1
