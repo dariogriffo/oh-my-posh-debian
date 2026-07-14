@@ -1,0 +1,34 @@
+ARG DEBIAN_DIST=bookworm
+FROM debian:bookworm
+
+ARG DEBIAN_DIST
+ARG oh_my_posh_VERSION
+ARG BUILD_VERSION
+ARG FULL_VERSION
+ARG ARCH
+ARG OMP_RELEASE
+
+RUN mkdir -p /output/usr/bin
+RUN mkdir -p /output/usr/share/oh-my-posh/themes
+RUN mkdir -p /output/usr/share/doc/oh-my-posh
+RUN mkdir -p /output/DEBIAN
+
+COPY ${OMP_RELEASE} /output/usr/bin/oh-my-posh
+RUN chmod 755 /output/usr/bin/oh-my-posh
+COPY themes/ /output/usr/share/oh-my-posh/themes/
+RUN chmod 644 /output/usr/share/oh-my-posh/themes/*
+COPY output/DEBIAN/control /output/DEBIAN/
+COPY output/DEBIAN/postinst /output/DEBIAN/postinst
+RUN chmod 755 /output/DEBIAN/postinst
+COPY output/copyright /output/usr/share/doc/oh-my-posh/
+COPY output/changelog.Debian /output/usr/share/doc/oh-my-posh/
+COPY output/README.md /output/usr/share/doc/oh-my-posh/
+
+RUN sed -i "s/DIST/$DEBIAN_DIST/" /output/usr/share/doc/oh-my-posh/changelog.Debian
+RUN sed -i "s/FULL_VERSION/$FULL_VERSION/" /output/usr/share/doc/oh-my-posh/changelog.Debian
+RUN sed -i "s/DIST/$DEBIAN_DIST/" /output/DEBIAN/control
+RUN sed -i "s/oh_my_posh_VERSION/$oh_my_posh_VERSION/" /output/DEBIAN/control
+RUN sed -i "s/BUILD_VERSION/$BUILD_VERSION/" /output/DEBIAN/control
+RUN sed -i "s/SUPPORTED_ARCHITECTURES/$ARCH/" /output/DEBIAN/control
+
+RUN dpkg-deb --build /output /oh-my-posh_${FULL_VERSION}.deb

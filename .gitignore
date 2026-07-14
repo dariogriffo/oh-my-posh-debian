@@ -1,0 +1,11 @@
+# .deb Packages
+*.deb
+
+.idea/*
+.DS_Store
+themes/
+posh-linux-*
+themes.zip
+*.dsc
+*.orig.tar.gz
+*.debian.tar.xz

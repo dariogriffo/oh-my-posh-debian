@@ -1,0 +1,38 @@
+#!/usr/bin/make -f
+DEB_HOST_ARCH ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
+OMP_VERSION := $(shell dpkg-parsechangelog -S Version | sed 's/[-~].*//')
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+
+override_dh_auto_build:
+	@arch="$(DEB_HOST_ARCH)"; \
+	case "$$arch" in \
+		amd64)   OMP_RELEASE="posh-linux-amd64" ;; \
+		arm64)   OMP_RELEASE="posh-linux-arm64" ;; \
+		armhf)   OMP_RELEASE="posh-linux-arm" ;; \
+		*) echo "Unsupported architecture: $$arch"; exit 1 ;; \
+	esac; \
+	echo "Downloading $$OMP_RELEASE for v$(OMP_VERSION)..."; \
+	wget -q "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$(OMP_VERSION)/$$OMP_RELEASE"; \
+	echo "$$OMP_RELEASE" > .omp_release_name
+
+override_dh_auto_install:
+	@OMP_RELEASE=$$(cat .omp_release_name); \
+	install -D -m 755 "$$OMP_RELEASE" debian/oh-my-posh/usr/bin/oh-my-posh; \
+	mkdir -p debian/oh-my-posh/usr/share/oh-my-posh/themes; \
+	install -m 644 themes/*.omp.* debian/oh-my-posh/usr/share/oh-my-posh/themes/
+
+override_dh_auto_test:
+
+override_dh_auto_clean:
+	@if [ -f .omp_release_name ]; then \
+		OMP_RELEASE=$$(cat .omp_release_name); \
+		rm -f "$$OMP_RELEASE" .omp_release_name || true; \
+	fi
+
+override_dh_strip:
+
+override_dh_shlibdeps:

@@ -1,0 +1,17 @@
+Source: oh-my-posh
+Section: utils
+Priority: optional
+Maintainer: Dario Griffo <dariogriffo@gmail.com>
+Build-Depends: debhelper-compat (= 13), wget, ca-certificates
+Standards-Version: 4.6.2
+Homepage: https://ohmyposh.dev
+Rules-Requires-Root: no
+
+Package: oh-my-posh
+Architecture: amd64 arm64 armhf
+Depends: ${misc:Depends}
+Description: A prompt theme engine for any shell
+ oh-my-posh is a custom prompt engine for any shell that has the ability to
+ adjust the prompt string with a function or variable — bash, zsh, fish,
+ PowerShell, cmd and more. This package includes the oh-my-posh binary and
+ all built-in themes under /usr/share/oh-my-posh/themes.
